@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TextToCalc Application</title>
+
+<script>
+    function splitStringByLine(inputString) {
+      return inputString.split('\n');
+    }
+
+    function separateWordsFromString(inputString) {
+    return inputString.split(' ').filter(word => word.trim() !== '');
+    }
+
+    function evaluateMathExpression(stringArray) {
+    // Concatenate the array elements into a single string
+    const expression = stringArray.join(' ');
+
+    // Use eval() to evaluate the expression
+    try {
+        return eval(expression);
+    } catch (error) {
+        return 'Error: Invalid expression';
+    }
+}
+
+    function checkNumberString(inputString)
+    {
+      var flag=true;
+      for(var i=0;i<inputString.length;i++)
+      {
+        if(!((inputString[i]>='0' && inputString[i]<='9' )|| (inputString[i]=='+' || inputString[i]=='-' || inputString[i]=='*' || inputString[i]=='/' || inputString[i]=='.')))
+          flag=false;
+      }
+      return flag;
+    }
+    function checkMathematicalSymbol(inputString)
+    {
+      var flag=false;
+      if((inputString.length==1 && (inputString[0]=='+' || inputString[0]=='-' || inputString[0]=='*' || inputString[0]=='/')))
+      {
+        flag=true;
+      }
+      return flag;
+    }
+
+    function creatingOneLineStringArrayData(inputString)
+    {
+      for(var i=0;i<inputString.length;i++)
+      {
+        if(!(checkMathematicalSymbol(inputString[i]) || checkNumberString(inputString[i])))
+        {
+          inputString.splice(i,1);
+          i--;
+        }
+      }
+      return inputString;
+    }
+
+
+    function calculation()
+    {
+      var total=0;
+      const inputString=document.getElementById("inputPanel").value;
+      const stringArray = splitStringByLine(inputString);
+      console.log(stringArray);
+
+      for(var i=0;i<stringArray.length;i++)
+      {
+        var oneLineSeperatedString=separateWordsFromString(stringArray[i]);
+        const onelineExpression = creatingOneLineStringArrayData(oneLineSeperatedString);
+        var result=evaluateMathExpression(oneLineSeperatedString);
+
+        var outputString=document.getElementById("outputPanel");
+        if(!checkNumberString(String(result)))
+        {
+          outputString.innerHTML+="\n";
+        }
+        else
+        {
+          outputString.innerHTML+="Rs."+result+"\n";
+          total+=result;
+        }
+      }
+
+      outputString.innerHTML+="\n\n\n\n\n\n Total Amount = Rs."+total;
+      
+
+    }
+
+    function callingFunction()
+    {
+      document.getElementById("outputPanel").innerHTML="";
+      calculation();
+    }
+
+</script>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: black;
+  }
+  h1,h2
+  {
+    color: blue;
+  }
+  .container {
+    display: flex;
+    height: 100vh;
+  }
+  .left-panel, .right-panel {
+    flex: 1;
+    border: 1px none #ccc;
+    position: relative;
+    background-color: black;
+  }
+  
+  .content {
+    padding: 20px;
+  }
+
+  /* Apply styles to the textarea to make it cover the whole page */
+.textarea {
+  width: 700px; /* Width of viewport */
+  height: 700px; /* Height of viewport */
+  grid-row: unset;
+  grid-column: unset;
+  border: none; /* Remove border */
+  resize: none; /* Prevent resizing */
+  padding: 10px; /* Add padding for readability */
+  box-sizing: border-box; /* Include padding in the total width/height */
+  font-size: 22px; /* Set font size as needed */
+  background-color: black;
+  color: teal;
+  border: 2px dotted transparent;
+  transition: border-color 3s ease;
+  outline: none;
+}
+textarea:focus {
+        border-color: blue; 
+        /*outline-color: teal;*/
+        box-shadow: 0 0 3px 2px darkgreen;
+    }
+
+</style>
+</head>
+<body>
+<h1 align="center"> Text to Calc App </h1>
+<div class="container">
+  <div class="left-panel">
+    <div class="ruler"></div>
+    <div class="content">
+      <!-- Left Panel Content Goes Here -->
+      <h2 align="center">Planning Panel</h2>
+      <textarea class="textarea" id="inputPanel" onkeyup="callingFunction()" onchange="callingFunction()" placeholder="Input Data here..."></textarea>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="ruler"></div>
+    <div class="content">
+      <!-- Right Panel Content Goes Here -->
+      <h2 align="center">Calculation Panel</h2>
+      <textarea class="textarea" id="outputPanel" placeholder=" See calculation here..." readonly></textarea>
+    </div>
+  </div>
+</div>
+</body>
+</html>
